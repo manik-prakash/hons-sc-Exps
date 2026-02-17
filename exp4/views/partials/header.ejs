@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure App Demo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="brand">SecureApp</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/public">Public</a>
+            <% if (typeof user !=='undefined' && user) { %>
+                <a href="/dashboard">Dashboard</a>
+                <% if (user.role==='admin' ) { %>
+                    <a href="/admin">Admin</a>
+                    <% } %>
+                        <% if (user.role==='editor' || user.role==='admin' ) { %>
+                            <a href="/editor">Editor</a>
+                            <% } %>
+                                <span class="role-badge <%= user.role %>" style="margin-left: 1rem;">
+                                    <%= user.role %>
+                                </span>
+                                <a href="/logout" style="color: var(--error-color);">Logout</a>
+                                <% } else { %>
+                                    <a href="/login">Login</a>
+                                    <a href="/register">Register</a>
+                                    <% } %>
+        </div>
+    </nav>
+    <main class="container">

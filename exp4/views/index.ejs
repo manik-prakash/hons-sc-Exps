@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+    <div style="text-align: center; padding: 4rem 0;">
+        <h1>Secure by Design</h1>
+        <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem;">
+            Experience a secure web application architecture built on the principles of 
+            <strong>Least Privilege</strong>, 
+            <strong>Fail-Safe Defaults</strong>, and 
+            <strong>Defense-in-Depth</strong>.
+        </p>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>Least Privilege</h3>
+                <p>Role-Based Access Control (RBAC) ensures users only access what they need. Guests, Customers, Editors, and Admins have distinct permissions.</p>
+            </div>
+            <div class="card">
+                <h3>Fail-Safe Defaults</h3>
+                <p>Secure input validation, generic error messages, and restrictive default settings protect the system from the start.</p>
+            </div>
+            <div class="card">
+                <h3>Defense-in-Depth</h3>
+                <p>Multiple layers of security including Rate Limiting, HTTP Headers (Helmet), and comprehensive logging.</p>
+            </div>
+        </div>
+
+        <% if (typeof user==='undefined' || !user) { %>
+            <div style="margin-top: 3rem;">
+                <a href="/register" class="btn-primary" style="text-decoration: none; padding: 1rem 2rem;">Get
+                    Started</a>
+            </div>
+            <% } %>
+    </div>
+
+    <%- include('partials/footer') %>

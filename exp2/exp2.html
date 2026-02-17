@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Input Validation Experiment</title>
+</head>
+
+<body>
+    <h2>Simple Input Demo (secure Validation)</h2>
+    <form id="basicForm">
+        Username: <input type="text" id="username"><br><br>
+        Age: <input type="text" id="age"><br><br>
+        Bio: <input type="text" id="bio"><br><br>
+        <button type="button" onclick="secureSubmit()">Submit with Security</button>
+    </form>
+    <p id="basicOutput"></p>
+    <script>
+        function checkSQLInjection(input) {
+            let patterns = /SELECT|INSERT|DELETE|DROP|UNION|--|;|OR|AND/i;
+            return !patterns.test(input);
+        }
+        function checkXSS(input) {
+            let patterns = /<script>|<\/script>|onerror=|onload=|javascript:/i;
+            return !patterns.test(input);
+        }
+        function sanitizeHTML(str) {
+            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        function secureSubmit() {
+            let username = document.getElementById("username").value.trim();
+            let bio = document.getElementById("bio").value.trim();
+            if (!checkSQLInjection(username)) {
+                alert("SQL Injection detected!");
+                return;
+            }
+            if (!checkXSS(bio)) {
+                alert("XSS detected!");
+                return;
+            }
+            let safeBio = sanitizeHTML(bio);
+            document.getElementById("basicOutput").innerHTML =
+                "Username: " + username + "<br>Sanitized Bio: " + safeBio;
+
+
+            function checkSQLInjection(input) {
+                let patterns = /SELECT|INSERT|DELETE|DROP|UNION|--|;|OR|AND/i;
+                return !patterns.test(input);
+            }
+
+        }
+    </script>
+</body>
+
+</html>

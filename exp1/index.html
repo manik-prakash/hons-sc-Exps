@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Programming Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Secure Programming Demo</h1>
+
+    <div class="demo">
+        <h2>1. Login Test</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="text" id="password" placeholder="Password">
+        <div>
+            <button onclick="setAttack('sqli')">SQL Injection</button>
+            <button onclick="setAttack('xss')">XSS Attack</button>
+            <button onclick="testLogin()">Test</button>
+        </div>
+        <div class="results">
+            <div><b>Robust:</b> <span id="robust-out">-</span></div>
+            <div><b>Secure:</b> <span id="secure-out">-</span></div>
+        </div>
+    </div>
+
+    <div class="demo">
+        <h2>2. XSS Sanitization</h2>
+        <input type="text" id="comment" placeholder="Try: <script>alert('XSS')</script>">
+        <button onclick="testSanitize()">Test</button>
+        <div class="results">
+            <div><b>Unsanitized:</b> <span id="unsanitized-out"></span></div>
+            <div><b>Sanitized:</b> <span id="sanitized-out"></span></div>
+        </div>
+    </div>
+
+    <div class="demo">
+        <h2>3. Password Strength</h2>
+        <input type="text" id="test-pass" placeholder="Enter password" oninput="analyzePassword()">
+        <div id="strength-text">Enter a password</div>
+        <div class="results">
+            <div><b>Plain:</b> <code id="plain-pw">-</code></div>
+            <div><b>Hashed:</b> <code id="hash-pw">-</code></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

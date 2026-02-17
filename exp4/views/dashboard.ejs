@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+
+    <div>
+        <h1>Dashboard</h1>
+        <p>Welcome back, <strong>
+                <%= user.username %>
+            </strong>!</p>
+
+        <div class="card">
+            <h3>User Profile</h3>
+            <p><strong>Email:</strong>
+                <%= user.email %>
+            </p>
+            <p><strong>Role:</strong> <span class="role-badge <%= user.role %>">
+                    <%= user.role %>
+                </span></p>
+            <p style="margin-top: 1rem;">This page is accessible to <strong>Customers</strong> and above.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <a href="/public" style="text-decoration: none;">
+                <div class="card">
+                    <h3>Public Area</h3>
+                    <p>Accessible to everyone.</p>
+                </div>
+            </a>
+
+            <% if (user.role==='editor' || user.role==='admin' ) { %>
+                <a href="/editor" style="text-decoration: none;">
+                    <div class="card">
+                        <h3>Editor Area</h3>
+                        <p>Manage content.</p>
+                    </div>
+                </a>
+                <% } %>
+
+                    <% if (user.role==='admin' ) { %>
+                        <a href="/admin" style="text-decoration: none;">
+                            <div class="card">
+                                <h3>Admin Console</h3>
+                                <p>System configuration.</p>
+                            </div>
+                        </a>
+                        <% } %>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

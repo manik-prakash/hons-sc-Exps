@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+
+    <div>
+        <h1>System Administration</h1>
+        <div class="alert"
+            style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #f87171;">
+            <strong>Least Privilege Check:</strong> You are seeing this because you have the <strong>ADMIN</strong>
+            role.
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>User Management</h3>
+                <p>Manage system users and roles.</p>
+            </div>
+            <div class="card">
+                <h3>System Logs</h3>
+                <p>View security audit logs.</p>
+            </div>
+            <div class="card">
+                <h3>Settings</h3>
+                <p>Configure application defaults.</p>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
