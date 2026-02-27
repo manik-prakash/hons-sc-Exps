@@ -1,0 +1,14 @@
+{
+  "name": "safe-code",
+  "version": "1.0.0",
+  "description": "CSRF-safe bank demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0"
+  }
+}

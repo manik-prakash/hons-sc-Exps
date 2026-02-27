@@ -1,0 +1,26 @@
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #f4f4f4;
+}
+
+h2 {
+    color: darkblue;
+}
+
+form {
+    margin-top: 20px;
+}
+
+input {
+    padding: 8px;
+    margin: 10px;
+}
+
+button {
+    padding: 10px;
+    background: darkblue;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

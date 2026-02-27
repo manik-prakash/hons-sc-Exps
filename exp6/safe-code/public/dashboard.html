@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Safe Bank - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Safe Bank Dashboard</h1>
+    <p class="badge">CSRF Protected</p>
+    <p>Welcome, <strong>victim</strong></p>
+    <p>Balance: <strong id="balance">Loading...</strong></p>
+
+    <h3>Transfer Money</h3>
+    <!-- Hidden CSRF token — injected by script.js after fetching from /csrf-token -->
+    <form id="transferForm" method="POST" action="/transfer">
+      <input type="hidden" name="_csrf" id="csrf-token">
+      <input type="number" name="amount" placeholder="Enter amount" min="1" required>
+      <button type="submit">Transfer</button>
+    </form>
+
+    <p id="message" class="message"></p>
+
+    <div class="info-box">
+      <h4>CSRF Defenses Active</h4>
+      <ul>
+        <li>Synchronizer CSRF token (per-session, injected by JS)</li>
+        <li>Origin / Referer header validation</li>
+        <li>SameSite=Strict session cookie</li>
+      </ul>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

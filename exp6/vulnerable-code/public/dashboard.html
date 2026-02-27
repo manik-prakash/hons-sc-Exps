@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h2>Welcome User</h2>
+
+<h3>Your Balance: ₹<span id="balance"></span></h3>
+
+<form action="/transfer" method="POST">
+    <input type="number" name="amount" placeholder="Amount">
+    <button type="submit">Transfer</button>
+</form>
+
+<script src="script.js"></script>
+
+</body>
+</html>
