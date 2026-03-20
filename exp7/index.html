@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 7 - Secure Error Handling & Logging</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1>Secure Error Handling & Logging</h1>
+  <p class="subtitle">Demonstrating information leakage vulnerabilities and their fixes</p>
+
+  <!-- Phase 1: Vulnerable vs Secure Login -->
+  <div class="phase">
+    <h2>Phase 1 &amp; 2 — Vulnerable vs Secure Login &amp; Error Handling</h2>
+    <p>Known users: admin, alice. Any other username = not found. Password for all = pass123.</p>
+    <div class="row">
+      <input type="text" id="p1-user" placeholder="Username" value="admin">
+      <input type="password" id="p1-pass" placeholder="Password" value="wrongpass">
+    </div>
+    <div class="row">
+      <button onclick="loginVulnerable()">Login (Vulnerable)</button>
+      <button onclick="loginSecure()">Login (Secure)</button>
+    </div>
+    <div class="results">
+      <div class="col">
+        <b>Vulnerable Response:</b>
+        <pre id="vuln-out" class="bad">—</pre>
+      </div>
+      <div class="col">
+        <b>Secure Response:</b>
+        <pre id="sec-out" class="good">—</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2: Error Type Selector -->
+  <div class="phase">
+    <h2>Phase 2 — Error Type Comparison</h2>
+    <p>Select an error type to see what each app exposes:</p>
+    <div class="row">
+      <select id="err-type">
+        <option value="userNotFound">User Not Found</option>
+        <option value="wrongPassword">Wrong Password</option>
+        <option value="dbError">Database Error</option>
+        <option value="fileError">File Path Error</option>
+      </select>
+      <button onclick="showErrorComparison()">Compare</button>
+    </div>
+    <div class="results">
+      <div class="col">
+        <b>Before (Vulnerable):</b>
+        <pre id="err-vuln" class="bad">—</pre>
+      </div>
+      <div class="col">
+        <b>After (Secure):</b>
+        <pre id="err-sec" class="good">—</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 3: Logging -->
+  <div class="phase">
+    <h2>Phase 3 — Secure Logging</h2>
+    <p>Simulate a login request and see what gets logged:</p>
+    <div class="row">
+      <input type="text" id="log-email" placeholder="Email" value="john@example.com">
+      <input type="password" id="log-pass" placeholder="Password" value="MySecret99!">
+    </div>
+    <div class="row">
+      <button onclick="logInsecure()">Log (Insecure)</button>
+      <button onclick="logSecure()">Log (Secure)</button>
+    </div>
+    <div class="results">
+      <div class="col">
+        <b>Insecure Log Entry:</b>
+        <pre id="log-bad" class="bad">—</pre>
+      </div>
+      <div class="col">
+        <b>Secure Log Entry:</b>
+        <pre id="log-good" class="good">—</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 4: Data Masking -->
+  <div class="phase">
+    <h2>Phase 4 — Data Masking &amp; PII Protection</h2>
+    <div class="row">
+      <input type="text" id="mask-email" placeholder="Email" value="john.doe@example.com">
+      <input type="text" id="mask-pass" placeholder="Password" value="SuperSecret123">
+    </div>
+    <div class="row">
+      <button onclick="maskData()">Mask Data</button>
+    </div>
+    <div class="results">
+      <div class="col">
+        <b>Original:</b>
+        <pre id="mask-orig" class="bad">—</pre>
+      </div>
+      <div class="col">
+        <b>Masked:</b>
+        <pre id="mask-out" class="good">—</pre>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
