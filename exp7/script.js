@@ -1,10 +1,8 @@
-// Simulated user database
 const USERS = {
   admin: 'pass123',
   alice: 'pass123'
 };
 
-// ─── Phase 1 & 2: Login Simulation ───────────────────────────────────────────
 
 function loginVulnerable() {
   const user = document.getElementById('p1-user').value.trim();
@@ -29,7 +27,7 @@ function loginVulnerable() {
 
 function loginSecure() {
   const user = document.getElementById('p1-user').value.trim();
-  const pass = document.getElementById('p1-pass').value;
+  const pass = document.getElementById('p1-pass').value.trim();
 
   let msg;
   if (!USERS[user] || USERS[user] !== pass) {
@@ -40,8 +38,6 @@ function loginSecure() {
 
   document.getElementById('sec-out').textContent = msg;
 }
-
-// ─── Phase 2: Error Type Comparison ──────────────────────────────────────────
 
 const ERROR_MAP = {
   userNotFound: {
@@ -67,8 +63,6 @@ function showErrorComparison() {
   document.getElementById('err-vuln').textContent = ERROR_MAP[type].vuln;
   document.getElementById('err-sec').textContent  = ERROR_MAP[type].sec;
 }
-
-// ─── Phase 3: Logging ─────────────────────────────────────────────────────────
 
 function logInsecure() {
   const email = document.getElementById('log-email').value;
@@ -101,8 +95,6 @@ function logSecure() {
 
   document.getElementById('log-good').textContent = entry;
 }
-
-// ─── Phase 4: Data Masking ────────────────────────────────────────────────────
 
 function maskEmail(email) {
   const [local, domain] = email.split('@');

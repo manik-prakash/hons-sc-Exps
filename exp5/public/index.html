@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>secure login app</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #fff;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            border: 1px solid #000;
+            padding: 2rem;
+            width: 300px;
+        }
+        h2 { text-align: center; }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label { display: block; margin-bottom: 0.5rem; }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            box-sizing: border-box;
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background: #333;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 1rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        .error { color: #cc0000; }
+        .success { color: #006600; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container" id="login-container">
+        <h2>login</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-username">username</label>
+                <input type="text" id="login-username" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">password</label>
+                <input type="password" id="login-password" required>
+            </div>
+            <button type="submit">login</button>
+        </form>
+        <div class="toggle-link" onclick="toggleForms()">need an account? register</div>
+    </div>
+
+    <div class="container hidden" id="register-container">
+        <h2>register</h2>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="reg-username">username</label>
+                <input type="text" id="reg-username" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">password</label>
+                <input type="password" id="reg-password" required>
+            </div>
+            <button type="submit">register</button>
+        </form>
+        <div class="toggle-link" onclick="toggleForms()">already have an account? login</div>
+    </div>
+
+    <div id="message"></div>
+
+    <script>
+        const loginContainer = document.getElementById('login-container');
+        const registerContainer = document.getElementById('register-container');
+        const messageDiv = document.getElementById('message');
+
+        function toggleForms() {
+            loginContainer.classList.toggle('hidden');
+            registerContainer.classList.toggle('hidden');
+            messageDiv.textContent = '';
+            document.getElementById('login-form').reset();
+            document.getElementById('register-form').reset();
+        }
+
+        function showMessage(msg, isError) {
+            messageDiv.textContent = msg;
+            messageDiv.className = isError ? 'error' : 'success';
+        }
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(data.message.toLowerCase(), false);
+                    setTimeout(toggleForms, 1500);
+                } else {
+                    showMessage((data.error || 'registration failed').toLowerCase(), true);
+                }
+            } catch (err) {
+                showMessage('network error', true);
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage(data.message.toLowerCase(), false);
+                } else {
+                    showMessage((data.error || 'login failed').toLowerCase(), true);
+                }
+            } catch (err) {
+                showMessage('network error', true);
+            }
+        });
+    </script>
+</body>
+</html>
