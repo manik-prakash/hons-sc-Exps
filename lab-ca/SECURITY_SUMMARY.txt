@@ -1,0 +1,187 @@
+Secure Coding Practices — Lab CA (Exp 8)
+==========================================
+
+Stack: Node.js + Express (backend) · React + Vite (frontend) · SQLite (better-sqlite3)
+
+
+========================================
+5 IMPLEMENTED SECURITY FEATURES
+========================================
+
+
+----------------------------------------
+1. PASSWORD HASHING (bcrypt)
+----------------------------------------
+
+What:
+  Passwords are never stored as plaintext. On registration, bcrypt hashes the
+  password with saltRounds=12 before saving to the database.
+
+Code — backend/auth.js:
+  const bcrypt = require('bcrypt');
+  async function hashPassword(plain) { return bcrypt.hash(plain, 12); }
+  async function verifyPassword(plain, hash) { return bcrypt.compare(plain, hash); }
+
+Code — backend/server.js (register route):
+  const hash = await hashPassword(password);
+  db.createUser.run(username, hash);  // stores hash, never plain password
+
+How to test:
+  1. Register a user via the app.
+  2. Open backend/users.db in any SQLite viewer (e.g., DB Browser for SQLite).
+  3. Confirm password_hash column starts with $2b$12$ — this is the bcrypt hash prefix.
+
+
+----------------------------------------
+2. XSS PREVENTION (Helmet CSP + React escaping)
+----------------------------------------
+
+What:
+  Two layers of protection — helmet sets a Content Security Policy header that
+  blocks inline/external scripts, and React escapes all user-supplied content
+  before rendering it in the DOM.
+
+Code — backend/server.js:
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc:  ["'self'"],   // blocks inline <script> and external scripts
+        styleSrc:   ["'self'", "'unsafe-inline'"],
+      },
+    },
+  }));
+
+How to test:
+  1. Login and go to the dashboard.
+  2. In the "Post a Message" box, type: <script>alert(1)</script>
+  3. Click Post. The message renders as literal text — no alert fires.
+     React treats it as a string, not HTML.
+
+
+----------------------------------------
+3. CSRF PROTECTION (csurf middleware)
+----------------------------------------
+
+What:
+  Every state-changing POST request (login, register, post message, logout)
+  requires a signed CSRF token. Requests without it are rejected with 403 Forbidden.
+
+Code — backend/server.js:
+  const csrf = require('csurf');
+  const csrfProtection = csrf({ cookie: false }); // token stored in server session
+
+  // Provide token to frontend
+  app.get('/csrf-token', csrfProtection, (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+  });
+
+  // Token required on every POST
+  app.post('/login', csrfProtection, async (req, res) => { ... });
+  app.post('/message', requireAuth, csrfProtection, (req, res) => { ... });
+
+Frontend — token attached to every request (frontend/src/pages/Login.jsx):
+  body: JSON.stringify({ username, password, _csrf: csrf })
+
+How to test:
+  Run this in a terminal (no _csrf token included):
+
+    curl -X POST http://localhost:3000/login \
+      -H "Content-Type: application/json" \
+      -d '{"username":"testuser","password":"password123"}'
+
+  Expected response: 403 Forbidden / invalid csrf token
+
+
+----------------------------------------
+4. SQL INJECTION PREVENTION (Parameterized Queries)
+----------------------------------------
+
+What:
+  All database queries use ? placeholder syntax via better-sqlite3. User input
+  is never concatenated into query strings.
+
+Code — backend/db.js:
+  const stmts = {
+    createUser:  db.prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)'),
+    findUser:    db.prepare('SELECT * FROM users WHERE username = ?'),
+    addMessage:  db.prepare('INSERT INTO messages (user_id, content) VALUES (?, ?)'),
+    getMessages: db.prepare(`
+      SELECT m.content, u.username FROM messages m
+      JOIN users u ON m.user_id = u.id
+      ORDER BY m.id DESC LIMIT 20
+    `),
+  };
+
+How to test:
+  1. On the login page, enter username:  ' OR '1'='1  and any password.
+  2. Login will fail with "Invalid credentials."
+     The injection string is treated as a literal username, not SQL logic.
+
+
+----------------------------------------
+5. JWT AUTHENTICATION (httpOnly Cookie)
+----------------------------------------
+
+What:
+  After login, a signed JSON Web Token is issued and stored in an
+  httpOnly; SameSite=Strict cookie. The token is invisible to JavaScript
+  (document.cookie cannot read it), protecting against XSS-based session theft.
+
+Code — backend/auth.js:
+  const jwt = require('jsonwebtoken');
+  const JWT_SECRET = process.env.JWT_SECRET || 'change-this-in-production';
+
+  function signToken(payload) {
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+  }
+  function verifyToken(token) {
+    return jwt.verify(token, JWT_SECRET);
+  }
+
+Code — backend/server.js (login route, setting the cookie):
+  const token = signToken({ userId: user.id, username: user.username });
+  res.cookie('token', token, {
+    httpOnly: true,     // JS cannot read via document.cookie
+    sameSite: 'strict', // CSRF mitigation
+    secure: false,      // set true in production (HTTPS only)
+    maxAge: 3600000,    // 1 hour
+  });
+
+How to test:
+  1. Login successfully.
+  2. Open DevTools > Application > Cookies > localhost.
+  3. The token cookie has HttpOnly checked — it cannot be accessed from the browser console.
+  4. Run document.cookie in the console — the token does not appear.
+  5. Delete the cookie manually, then try to visit /dashboard — you are redirected to login.
+
+
+========================================
+RUNNING THE APP
+========================================
+
+Backend:
+  cd backend
+  npm install
+  node server.js
+  # Runs at http://localhost:3000
+
+Frontend:
+  cd frontend
+  npm install
+  npm run dev
+  # Runs at http://localhost:5173
+
+Open http://localhost:5173 in your browser.
+
+
+========================================
+KEY FILES
+========================================
+
+  backend/server.js                    Express app — all routes, middleware, security config
+  backend/auth.js                      bcrypt hashing + JWT sign/verify
+  backend/db.js                        SQLite setup, all parameterized queries
+  frontend/src/pages/Login.jsx         Login form — fetches CSRF token, validates input
+  frontend/src/pages/Register.jsx      Register form — success screen after registration
+  frontend/src/pages/Dashboard.jsx     Protected page — message board, security badges
